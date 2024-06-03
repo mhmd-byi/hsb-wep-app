@@ -6,7 +6,7 @@ import User from '@/models/User';
 export default async function handler(req, res) {
   await dbConnect();
 
-  const users = await User.find({ userRole: 'user' });
+  const users = await User.find({ userRole: 'member' });
 
   res.status(200).json(users);
 }

@@ -1,6 +1,10 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
   its: {
     type: Number,
     required: true,
@@ -9,19 +13,18 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    unique: true,
   },
   email: {
     type: String,
     require: true,
-    default: 'null'
+    unique: true,
   },
   phone: {
     type: Number,
     required: true,
   },
-  Batch: {
-    type: String,
+  batch: {
+    type: Number,
     require: true,
   },
   profileImage: {
@@ -32,17 +35,8 @@ const UserSchema = new mongoose.Schema({
   },
   userRole: {
     type: String,
-    enum: ['admin', 'user'],
-    default: 'user',
-  },
-  isLoggedIn: {
-    type: Boolean,
-    default: false,
-  },
-  multipleLogin: {
-    type: Boolean,
-    default: false,
+    default: "member",
   }
 });
 
-export default mongoose.models.User || mongoose.model('User', UserSchema);
+export default mongoose.models.User || mongoose.model("User", UserSchema);
