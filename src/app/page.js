@@ -1,148 +1,52 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import Image from "next/image";
 
 export default function Login() {
-  const [its, setIts] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('user');
-  const [activeClassName, setActiveClassName] = useState(
-    'px-4 py-2 border-[#1c6e04] text-[#1c6e04] mr-1'
-  );
-  const [inactiveClassName, setInactiveClassName] = useState(
-    'px-4 py-2 bg-[#1c6e04] text-white mr-1'
-  );
-  const [userData, setUserData] = useState(null);
-
-  useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (user) {
-      setUserData(JSON.parse(user));
-    } else {
-      return;
-    }
-  }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    // Check if ITS is entered
-    if (!its) {
-      alert('Please enter your ITS.');
-      return;
-    }
-  
-    // Make a request to check if the ITS exists
-    const res = await fetch(`/api/check-its/${its}`);
-    const data = await res.json();
-  
-    if (!data.exists) {
-      // If ITS is not found, show alert message
-      alert('ITS not found.');
-      return;
-    }
-  
-    // If ITS exists, proceed with login
-    const loginRes = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ its, password }),
-    });
-  
-    const loginData = await loginRes.json();
-  
-    if (loginData.status === 'Already logged in') {
-      alert('Already logged in');
-      window.location.reload();
-    }
-  
-    if (loginRes.status === 200) {
-      // If the logged-in user is an admin, but they're trying to log in from the user tab
-      if (loginData.user.userRole === 'admin' && activeTab === 'user') {
-        alert('Please login from admin tab');
-        return;
-      }
-  
-      // If the logged-in user is a user, but they're trying to log in from the admin tab
-      if (loginData.user.userRole === 'user' && activeTab === 'admin') {
-        alert('Please login from user tab');
-        return;
-      }
-  
-      localStorage.setItem('user', JSON.stringify(loginData.user));
-  
-      if (loginData.user.userRole === 'user') {
-        window.location.href = '/screen';
-      } else if (loginData.user.userRole === 'admin') {
-        window.location.href = '/admin';
-      }
-    } else {
-      setError(loginData.error);
-    }
-  };
-  
-
   return (
-    <main className="flex min-h-screen flex-col items-center p-24">
-      <div className="relative flex place-items-center z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70]"
-          src="/ITS_Logo_Golden.png"
-          alt="App Logo"
-          width={180}
-          height={37}
-          priority
-        />
+    <div class="h-screen w-screen flex justify-center items-center">
+      <div class="grid gap-8">
+        <div class="border-[20px] border-transparent rounded-[20px] bg-theme-color shadow-lg xl:p-10 2xl:p-10 lg:p-10 md:p-10 sm:p-2 m-2">
+          <div className="flex flex-col justify-center items-center">
+            <Image src="/hsb-logo.png" width={250} height={30} />
+            <h1 class="pt-8 pb-6 font-bold text-white text-4xl text-center cursor-default">
+              Log in
+            </h1>
+          </div>
+          <form action="#" method="post" class="space-y-4">
+            <div>
+              <input
+                id="number"
+                class="border p-3 bg-white text-theme-color shadow-md placeholder:text-base focus:scale-105 focus:border-theme-color ease-in-out duration-300 border-theme-color rounded-lg w-full"
+                type="number"
+                placeholder="Enter ITS Number"
+                required
+              />
+            </div>
+            <div>
+              <input
+                id="password"
+                class="border p-3 shadow-md text-theme-color bg-white placeholder:text-base focus:scale-105 ease-in-out duration-300 border-gray-300 rounded-lg w-full"
+                type="password"
+                placeholder="Password"
+                required
+              />
+            </div>
+            <a
+              class="group text-white transition-all duration-100 ease-in-out"
+              href="#"
+            >
+              <span class="bg-left-bottom bg-gradient-to-r text-sm from-white to-white bg-[length:0%_2px] bg-no-repeat group-hover:bg-[length:100%_2px] transition-all duration-500 ease-out">
+                Forget your password?
+              </span>
+            </a>
+            <button
+              class="bg-theme-color shadow-lg mt-6 p-2 text-white rounded-lg w-full border-2 border-white hover:scale-105 transition duration-300 ease-in-out"
+              type="submit"
+            >
+              LOG IN
+            </button>
+          </form>
+        </div>
       </div>
-      <div className="mt-8">
-        <button
-          onClick={() => setActiveTab('user')}
-          className={activeTab === 'user' ? activeClassName : inactiveClassName}
-        >
-          User
-        </button>
-        <button
-          onClick={() => setActiveTab('admin')}
-          className={
-            activeTab === 'admin' ? activeClassName : inactiveClassName
-          }
-        >
-          Admin
-        </button>
-      </div>
-      <form onSubmit={handleSubmit} className="flex flex-col mt-8">
-        <label htmlFor="its" className="mb-2">
-          Enter ITS:
-        </label>
-        <input
-          type="number"
-          id="its"
-          value={its}
-          onChange={(e) => setIts(e.target.value)}
-          required
-          className="mb-4 px-3 py-2 border border-gray-300"
-        />
-        {activeTab === 'admin' && (
-          <>
-            <label htmlFor="password" className="mb-2">
-              Enter Password:
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="mb-4 px-3 py-2 border border-gray-300"
-            />
-          </>
-        )}
-        <button type="submit" className="px-4 py-2 bg-[#1c6e04] text-white">
-          View Waaz
-        </button>
-      </form>
-    </main>
+    </div>
   );
 }

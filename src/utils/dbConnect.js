@@ -7,7 +7,7 @@ async function dbConnect() {
     return;
   }
 
-  const db = await mongoose.connect('mongodb+srv://mhmd:Mhmd%4066426633@kal-graphql.8ubsnp3.mongodb.net/goregaon-broadcast?retryWrites=true&w=majority', {
+  const db = await mongoose.connect('mongodb+srv://mhmd:Mhmd%4066426633@kal-graphql.8ubsnp3.mongodb.net/hsb-web-app?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });

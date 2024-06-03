@@ -57,24 +57,6 @@ export default function ViewUsers() {
     }
   };
 
-  const handleSessionLogout = async (its) => {
-    try {
-      console.log('this is its fe', its);
-      const response = await fetch(`/api/session-out/${its}`, {
-        method: 'PATCH',
-      });
-
-      if (!response.ok) throw new Error('Update failed');
-      if (response.ok) {
-        alert('User logged out from everywhere');
-        window.location.reload();
-      }
-
-    } catch (error) {
-      console.error('Failed to update user:', error);
-    }
-  };
-
   return (
     <div className="flex flex-col min-h-screen">
       <header className="p-4 bg-[#1c6e04] text-white flex justify-between">
