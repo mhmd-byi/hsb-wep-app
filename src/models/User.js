@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import jwt from 'jsonwebtoken';
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -38,5 +39,13 @@ const UserSchema = new mongoose.Schema({
     default: "member",
   }
 });
+
+// Method to generate a token
+UserSchema.methods.generateAuthToken = function() {
+  const token = jwt.sign({ _id: this._id }, 'asdfghjkL007', {
+    expiresIn: '7d'
+  });
+  return token;
+};
 
 export default mongoose.models.User || mongoose.model("User", UserSchema);

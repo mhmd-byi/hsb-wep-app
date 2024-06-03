@@ -1,6 +1,48 @@
+'use client';
+
+import { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
+  const [its, setIts] = useState('');
+  const [password, setPassword] = useState('');
+  const router = useRouter();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    // Check if ITS is entered
+    if (!its) {
+      alert('Please enter your ITS.');
+      return;
+    }
+  
+    // Make a request to check if the ITS exists
+    const res = await fetch(`/api/check-its/${its}`);
+    const data = await res.json();
+  
+    if (!data.exists) {
+      // If ITS is not found, show alert message
+      alert('ITS not found.');
+      return;
+    }
+  
+    const loginRes = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ its, password }),
+    });
+  
+    const loginData = await loginRes.json();
+    console.log('this is login data', loginData);
+    if (typeof window !== "undefined") {
+      localStorage.setItem('token', loginData.token);
+      localStorage.setItem('userId', loginData.user._id);
+    }
+    router.push('/dashboard')
+  };
+
   return (
     <div class="h-screen w-screen flex justify-center items-center">
       <div class="grid gap-8">
@@ -11,13 +53,15 @@ export default function Login() {
               Log in
             </h1>
           </div>
-          <form action="#" method="post" class="space-y-4">
+          <form onSubmit={handleSubmit} class="space-y-4">
             <div>
               <input
-                id="number"
+                id="its"
+                name="its"
                 class="border p-3 bg-white text-theme-color shadow-md placeholder:text-base focus:scale-105 focus:border-theme-color ease-in-out duration-300 border-theme-color rounded-lg w-full"
                 type="number"
                 placeholder="Enter ITS Number"
+                onChange={(e) => setIts(e.target.value)}
                 required
               />
             </div>
@@ -27,6 +71,7 @@ export default function Login() {
                 class="border p-3 shadow-md text-theme-color bg-white placeholder:text-base focus:scale-105 ease-in-out duration-300 border-gray-300 rounded-lg w-full"
                 type="password"
                 placeholder="Password"
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>

@@ -1,9 +1,9 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import dbConnect from '@/utils/dbConnect';
 import User from '@/models/User';
 
 export default async function handler(req, res) {
-  const { its } = req.body;
+  console.log('here')
+  const { its, password } = req.body;
   await dbConnect();
 
   const user = await User.findOne({ its });
@@ -12,12 +12,8 @@ export default async function handler(req, res) {
     return res.status(401).send({ error: 'Invalid ITS' });
   }
 
-  if (user.isLoggedIn && user.userRole === 'user') {
-    return res.status(200).send({ status: 'Already logged in' });
+  if (user.password === password) {
+    const token = user.generateAuthToken();
+    return res.status(200).send({ token, user });
   }
-
-  user.isLoggedIn = true;
-  await user.save();
-
-  res.status(200).send({ user });
 }
