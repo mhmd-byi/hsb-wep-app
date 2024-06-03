@@ -71,7 +71,7 @@ export default function Youtube() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="p-4 bg-[#1c6e04] text-white flex justify-between">
-        <h1 className="text-2xl">Goregaon Jamaat Broadcasting App</h1>
+        <h1 className="text-2xl">HSB Indore Web App</h1>
         <div className="relative inline-block">
           <div>
             <button

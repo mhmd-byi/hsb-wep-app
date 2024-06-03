@@ -78,7 +78,7 @@ export default function Screen() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="px-4 py-2 bg-[#1c6e04] text-white flex justify-between md:px-6 md:py-4 lg:px-8 lg:py-6">
-        <h1 className="text-xl md:text-2xl lg:text-3xl">Goregaon Jamaat Broadcasting App</h1>
+        <h1 className="text-xl md:text-2xl lg:text-3xl">HSB Indore Web App</h1>
         <div className="relative inline-block">
           <div>
             <button
