@@ -8,14 +8,7 @@ import { useState, useEffect } from "react";
 export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
   const [users, setUsers] = useState([]);
-
-  const handleAddUser = () => {
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
+  console.log('this is users', users)
 
   const fetchUsers = async () => {
     const response = await fetch("/api/users");
@@ -25,7 +18,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [showModal]);
 
   const handleDelete = async (its) => {
     try {
@@ -53,14 +46,14 @@ export default function Dashboard() {
         <Image src="/hsb-logo.png" width={150} height={30} />
       </header>
       <div className="h-full w-screen flex flex-col justify-center items-center">
-        {showModal && <Modal onClose={handleCloseModal} />}
+        {showModal && <Modal open={showModal} setOpen={setShowModal} />}
         <div className="flex justify-between w-full px-10 my-7">
           <div>
             <h1>HSB Members</h1>
           </div>
           <div>
             <button
-              onClick={handleAddUser}
+              onClick={() => setShowModal(true)}
               className="px-4 py-2 font-medium text-white bg-red-600 rounded-md hover:bg-red-500 focus:outline-none focus:shadow-outline-red active:bg-red-600 transition duration-150 ease-in-out"
             >
               Add User
@@ -107,7 +100,7 @@ export default function Dashboard() {
                 <td className="px-6 py-4 whitespace-nowrap">profileImage</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                    {user.userRole}
+                    {user.role}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">

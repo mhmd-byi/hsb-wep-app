@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     });
 
     if (user) {
-      res.status(200).send({ done: true });
+      res.status(200).send({ done: true, user: user });
     } else {
       res.status(401).send({ error: 'Invalid details' });
     }

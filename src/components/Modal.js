@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -9,26 +8,15 @@ import {
 } from "@headlessui/react";
 import { useForm } from "react-hook-form";
 
-export const Modal = ({ onClose, children }) => {
-  const [open, setOpen] = useState(true);
+export const Modal = ({ open, setOpen }) => {
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
-      its: "",
-      name: "",
-      email: "",
-      phone: "",
-      batch: "",
       password: "abc@123",
-      role: "member",
     },
   });
 
-  const handleClose = () => {
-    setOpen(false);
-    if (onClose) onClose();
-  };
-
   const onSubmit = async (data) => {
+    console.log(data)
     const res = await fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -36,7 +24,8 @@ export const Modal = ({ onClose, children }) => {
     });
     console.log(res);
     if (res.status === 200) {
-      window.location.reload();
+      setOpen(false);
+      reset();
     } else {
       alert("User not added");
     }
@@ -74,7 +63,7 @@ export const Modal = ({ onClose, children }) => {
                       type="button"
                       className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
                       data-modal-toggle="product-modal"
-                      onClick={handleClose}
+                      onClick={() => setOpen(false)}
                     >
                       <svg
                         className="w-5 h-5"
@@ -183,13 +172,21 @@ export const Modal = ({ onClose, children }) => {
                           >
                             Role
                           </label>
-                          <input
+                          {/*<input
                             type="text"
                             id="role"
                             {...register("role")}
                             className="shadow-sm bg-gray-50 border-2 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:ring-2 focus:border-theme-color block w-full p-2.5"
                             placeholder="Enter Member Role"
-                          />
+  />*/}
+                          <select
+                            {...register("role")}
+                            className="shadow-sm bg-gray-50 border-2 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:ring-2 focus:border-theme-color block w-full p-2.5"
+                          >
+                            <option value="0">Select Options</option>
+                            <option value="admin">admin</option>
+                            <option value="member">member</option>
+                          </select>
                         </div>
                         <div className="col-span-full">
                           <label
@@ -205,9 +202,9 @@ export const Modal = ({ onClose, children }) => {
                           />
                         </div>
                       </div>
-                      <div className="mt-10 pt-6 border-t border-gray-200 rounded-b">
+                      <div className="flex justify-end mt-10 pt-6 border-t border-gray-200 rounded-b">
                         <button
-                          className="text-white bg-theme-color font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                          className="text-white bg-theme-color font-medium  rounded-lg text-sm px-5 py-2.5 text-center"
                           type="submit"
                         >
                           Register
