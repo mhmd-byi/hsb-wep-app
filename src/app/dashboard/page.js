@@ -1,20 +1,48 @@
+"use client";
+
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Image from "next/image";
+import { Modal } from "@/components/Modal";
+import { useState, useEffect } from "react";
 
 export default function Dashboard() {
-  const imagePlaceholder = "https://www.pexels.com/photo/shallow-focus-photography-of-man-1300402/"
+  const [showModal, setShowModal] = useState(false);
+  const [users, setUsers] = useState([]);
+
+  const handleAddUser = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const fetchUsers = async () => {
+    const response = await fetch("/api/users");
+    const data = await response.json();
+    setUsers(data);
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
   return (
     <ProtectedRoute>
       <header className="bg-theme-color py-4 flex justify-center">
         <Image src="/hsb-logo.png" width={150} height={30} />
       </header>
       <div className="h-full w-screen flex flex-col justify-center items-center">
+        {showModal && <Modal onClose={handleCloseModal} />}
         <div className="flex justify-between w-full px-10 my-7">
           <div>
             <h1>HSB Members</h1>
           </div>
           <div>
-            <button className="px-4 py-2 font-medium text-white bg-red-600 rounded-md hover:bg-red-500 focus:outline-none focus:shadow-outline-red active:bg-red-600 transition duration-150 ease-in-out">
+            <button
+              onClick={handleAddUser}
+              className="px-4 py-2 font-medium text-white bg-red-600 rounded-md hover:bg-red-500 focus:outline-none focus:shadow-outline-red active:bg-red-600 transition duration-150 ease-in-out"
+            >
               Add User
             </button>
           </div>
@@ -38,7 +66,7 @@ export default function Dashboard() {
                 Batch
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Profile Image 
+                Profile Image
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Role
@@ -49,42 +77,26 @@ export default function Dashboard() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            <tr>
-              <td className="px-6 py-4 whitespace-nowrap">3040xxxx</td>
-              <td className="px-6 py-4 whitespace-nowrap">Mohammed Bhai Rafique</td>
-              <td className="px-6 py-4 whitespace-nowrap">mohammedrafique@gmai.com</td>
-              <td className="px-6 py-4 whitespace-nowrap">9966336699</td>
-              <td className="px-6 py-4 whitespace-nowrap">2016</td>
-              <td className="px-6 py-4 whitespace-nowrap">profileImage</td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                  Active
-                </span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <button className="ml-2 px-4 py-2 font-medium text-white bg-red-600 rounded-md hover:bg-red-500 focus:outline-none focus:shadow-outline-red active:bg-red-600 transition duration-150 ease-in-out">
-                  Delete User
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td className="px-6 py-4 whitespace-nowrap">John Doe</td>
-              <td className="px-6 py-4 whitespace-nowrap">john@example.com</td>
-              <td className="px-6 py-4 whitespace-nowrap">User</td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                  Inactive
-                </span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <button className="px-4 py-2 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue active:bg-blue-600 transition duration-150 ease-in-out">
-                  Edit
-                </button>
-                <button className="ml-2 px-4 py-2 font-medium text-white bg-red-600 rounded-md hover:bg-red-500 focus:outline-none focus:shadow-outline-red active:bg-red-600 transition duration-150 ease-in-out">
-                  Delete
-                </button>
-              </td>
-            </tr>
+            {users.map((user) => (
+              <tr>
+                <td className="px-6 py-4 whitespace-nowrap">{user.its}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{user.phone}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{user.batch}</td>
+                <td className="px-6 py-4 whitespace-nowrap">profileImage</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    {user.userRole}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <button className="ml-2 px-4 py-2 font-medium text-white bg-red-600 rounded-md hover:bg-red-500 focus:outline-none focus:shadow-outline-red active:bg-red-600 transition duration-150 ease-in-out">
+                    Delete User
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

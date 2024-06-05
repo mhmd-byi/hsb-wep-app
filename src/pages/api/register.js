@@ -2,7 +2,7 @@ import dbConnect from '@/utils/dbConnect';
 import User from '@/models/User';
 
 export default async function handler(req, res) {
-  const { name, its, password, email, phone, batch, address } = req.body;
+  const { name, its, password, email, phone, batch, role } = req.body;
 
   try {
     await dbConnect();
@@ -10,12 +10,11 @@ export default async function handler(req, res) {
     const user = await User.create({
       its,
       name,
-      password,
       email,
       phone,
       batch,
-      address
-
+      role,
+      password,
     });
 
     if (user) {
@@ -24,6 +23,7 @@ export default async function handler(req, res) {
       res.status(401).send({ error: 'Invalid details' });
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message });
   }
 }
