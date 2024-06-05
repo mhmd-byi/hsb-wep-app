@@ -1,41 +1,42 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogPanel,
-  DialogTitle,
   Transition,
   TransitionChild,
 } from "@headlessui/react";
+import { useForm } from "react-hook-form";
 
 export const Modal = ({ onClose, children }) => {
   const [open, setOpen] = useState(true);
-
-  const [its, setIts] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [batch, setBatch] = useState("");
-  const [password, setPassword] = useState("abc@123");
-  const [role, setRole] = useState("member");
+  const { register, handleSubmit, reset } = useForm({
+    defaultValues: {
+      its: "",
+      name: "",
+      email: "",
+      phone: "",
+      batch: "",
+      password: "abc@123",
+      role: "member",
+    },
+  });
 
   const handleClose = () => {
     setOpen(false);
     if (onClose) onClose();
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const onSubmit = async (data) => {
     const res = await fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, its, phone, email, batch, role, password }),
+      body: JSON.stringify(data),
     });
     console.log(res);
     if (res.status === 200) {
-      alert("User created");
+      window.location.reload();
     } else {
       alert("User not added");
     }
@@ -66,151 +67,150 @@ export const Modal = ({ onClose, children }) => {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 w-fit h-fit">
-                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                  <div>
-                    <DialogTitle
-                      as="h3"
-                      className="text-3xl  text-center font-bold leading-6 text-theme-color"
+                <div className="bg-white border-4 border-theme-color rounded-lg shadow relative">
+                  <div className="flex items-start justify-between p-5 border-b rounded-t">
+                    <h3 className="text-xl font-semibold">Add Member</h3>
+                    <button
+                      type="button"
+                      className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
+                      data-modal-toggle="product-modal"
+                      onClick={handleClose}
                     >
-                      Member Details
-                    </DialogTitle>
+                      <svg
+                        className="w-5 h-5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        ></path>
+                      </svg>
+                    </button>
+                  </div>
 
-                    <form class="mt-8" onSubmit={handleSubmit}>
-                      <div class="grid md:grid-cols-2 md:gap-6">
-                        <div class="relative z-0 w-full mb-5 group">
-                          <input
-                            type="number"
-                            name="its"
-                            onChange={(e) => setIts(e.target.value)}
-                            id="its_number"
-                            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2  appearance-none border-gray-600  focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                            placeholder=" "
-                            required
-                          />
+                  <div className="p-6 space-y-6">
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                      <div className="grid grid-cols-6 gap-6">
+                        <div className="col-span-6 sm:col-span-3">
                           <label
-                            for="its_number"
-                            class="peer-focus:font-medium absolute text-sm text-gray-500 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                            htmlFor="its"
+                            className="text-sm font-medium text-gray-900 block mb-2"
                           >
                             ITS Number
                           </label>
-                        </div>
-                        <div class="relative z-0 w-full mb-5 group">
                           <input
-                            type="text"
-                            name="name"
-                            onChange={(e) => setName(e.target.value)}
-                            id="name"
-                            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2  appearance-none  border-gray-600  focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                            placeholder=" "
+                            type="number"
+                            id="its"
+                            {...register("its")}
+                            className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-theme-color block w-full p-2.5"
+                            placeholder="3040xxxx"
                             required
                           />
+                        </div>
+                        <div className="col-span-6 sm:col-span-3">
                           <label
-                            for="name"
-                            class="peer-focus:font-medium absolute text-sm text-gray-500 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                            htmlFor="name"
+                            className="text-sm font-medium text-gray-900 block mb-2"
                           >
                             Name
                           </label>
-                        </div>
-                      </div>
-                      <div class="relative z-0 w-full mb-5 group">
-                        <input
-                          type="email"
-                          name="email"
-                          onChange={(e) => setEmail(e.target.value)}
-                          id="email"
-                          class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2  appearance-none  border-gray-600  focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                          placeholder=" "
-                          required
-                        />
-                        <label
-                          for="email"
-                          class="peer-focus:font-medium absolute text-sm text-gray-500 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                        >
-                          Email
-                        </label>
-                      </div>
-                      <div class="grid md:grid-cols-2 md:gap-6">
-                        <div class="relative z-0 w-full mb-5 group">
                           <input
-                            type="number"
-                            name="phone"
-                            onChange={(e) => setPhone(e.target.value)}
-                            id="phone"
-                            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2  appearance-none  border-gray-600  focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                            placeholder=" "
+                            type="text"
+                            id="name"
+                            {...register("name")}
+                            className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-cyan-600 block w-full p-2.5"
+                            placeholder="Enter Member Name"
                             required
                           />
+                        </div>
+                        <div className="col-span-6 sm:col-span-3">
                           <label
-                            for="phone"
-                            class="peer-focus:font-medium absolute text-sm text-gray-500 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                            htmlFor="email"
+                            className="text-sm font-medium text-gray-900 block mb-2"
                           >
-                            Phone Number
+                            Email
                           </label>
-                        </div>
-                        <div class="relative z-0 w-full mb-5 group">
                           <input
-                            type="number"
-                            name="batch"
-                            onChange={(e) => setBatch(e.target.value)}
-                            id="batch"
-                            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2  appearance-none  border-gray-600  focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                            placeholder=" "
+                            type="email"
+                            id="email"
+                            {...register("email")}
+                            className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-cyan-600 block w-full p-2.5"
+                            placeholder="Email"
                             required
                           />
+                        </div>
+                        <div className="col-span-6 sm:col-span-3">
                           <label
-                            for="batch"
-                            class="peer-focus:font-medium absolute text-sm text-gray-500 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                            htmlFor="phone"
+                            className="text-sm font-medium text-gray-900 block mb-2"
+                          >
+                            Phone
+                          </label>
+                          <input
+                            type="number"
+                            id="phone"
+                            {...register("phone")}
+                            minLength="1"
+                            maxLength="10"
+                            className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-cyan-600 block w-full p-2.5"
+                            placeholder="Enter Phone Number"
+                            required
+                          />
+                        </div>
+                        <div className="col-span-6 sm:col-span-3">
+                          <label
+                            htmlFor="batch"
+                            className="text-sm font-medium text-gray-900 block mb-2"
                           >
                             Batch
                           </label>
-                        </div>
-                      </div>
-                      <div class="grid md:grid-cols-2 md:gap-6">
-                        <div class="relative z-0 w-full mb-5 group">
                           <input
-                            type="file"
-                            name="profile-image"
-                            id="profile-image"
-                            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2  appearance-none  border-gray-600  focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                            placeholder=" "
+                            type="number"
+                            id="batch"
+                            {...register("batch")}
+                            className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-cyan-600 block w-full p-2.5"
+                            placeholder="Enter Batch"
+                            required
                           />
-                          <label
-                            for="profile-image"
-                            class="peer-focus:font-medium absolute text-sm text-gray-500 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                          >
-                            Upload Profile Image
-                          </label>
                         </div>
-                        <div class="relative z-0 w-full mb-5 group">
-                          <input
-                            type="text"
-                            name="role"
-                            onChange={(e) => setRole(e.target.value)}
-                            id="role"
-                            class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2  appearance-none  border-gray-600  focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                            placeholder=" "
-                          />
+                        <div className="col-span-6 sm:col-span-3">
                           <label
-                            for="role"
-                            class="peer-focus:font-medium absolute text-sm text-gray-500 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                            htmlFor="role"
+                            className="text-sm font-medium text-gray-900 block mb-2"
                           >
                             Role
                           </label>
+                          <input
+                            type="text"
+                            id="role"
+                            {...register("role")}
+                            className="shadow-sm bg-gray-50 border-2 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:ring-2 focus:border-theme-color block w-full p-2.5"
+                            placeholder="Enter Member Role"
+                          />
+                        </div>
+                        <div className="col-span-full">
+                          <label
+                            htmlFor="profileImage"
+                            className="text-sm font-medium text-gray-900 block mb-2"
+                          >
+                            Profile Image
+                          </label>
+                          <input
+                            type="file"
+                            id="profileImage"
+                            className="shadow-sm bg-gray-50 border-2 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:ring-2 focus:border-theme-color block w-full p-2.5"
+                          />
                         </div>
                       </div>
-                      <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                      <div className="mt-10 pt-6 border-t border-gray-200 rounded-b">
                         <button
+                          className="text-white bg-theme-color font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                           type="submit"
-                          className="inline-flex w-full justify-center rounded-md bg-theme-color px-3 py-2 text-sm font-semibold border-2 border-theme-color text-white hover:text-theme-color shadow-sm hover:bg-transparent sm:ml-3 sm:w-auto"
                         >
                           Register
-                        </button>
-                        <button
-                          type="button"
-                          className="mt-3 inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-600 sm:mt-0 sm:w-auto"
-                          onClick={handleClose}
-                        >
-                          Cancel
                         </button>
                       </div>
                     </form>

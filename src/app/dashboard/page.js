@@ -27,6 +27,26 @@ export default function Dashboard() {
     fetchUsers();
   }, []);
 
+  const handleDelete = async (its) => {
+    try {
+      const confirmDelete = window.confirm(
+        "Are you sure you want to delete this user?"
+      );
+      if (confirmDelete) {
+        const response = await fetch(`/api/delete-user/${its}`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok) throw new Error("Deletion failed");
+
+        // Remove the user from the users state
+        setUsers(users.filter((user) => user.its !== its));
+      }
+    } catch (error) {
+      console.error("Failed to delete user:", error);
+    }
+  };
+
   return (
     <ProtectedRoute>
       <header className="bg-theme-color py-4 flex justify-center">
@@ -91,7 +111,10 @@ export default function Dashboard() {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <button className="ml-2 px-4 py-2 font-medium text-white bg-red-600 rounded-md hover:bg-red-500 focus:outline-none focus:shadow-outline-red active:bg-red-600 transition duration-150 ease-in-out">
+                  <button
+                    onClick={() => handleDelete(user.its)}
+                    className="ml-2 px-4 py-2 font-medium text-white bg-red-600 rounded-md hover:bg-red-500 focus:outline-none focus:shadow-outline-red active:bg-red-600 transition duration-150 ease-in-out"
+                  >
                     Delete User
                   </button>
                 </td>
