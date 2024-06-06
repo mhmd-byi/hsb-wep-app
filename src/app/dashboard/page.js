@@ -42,10 +42,7 @@ export default function Dashboard() {
 
   return (
     <ProtectedRoute>
-      <header className="bg-theme-color py-4 flex justify-center">
-        <Image src="/hsb-logo.png" width={150} height={30} />
-      </header>
-      <div className="h-full w-screen flex flex-col justify-center items-center">
+      <div className="h-full flex flex-col">
         {showModal && <Modal open={showModal} setOpen={setShowModal} />}
         <div className="flex justify-between w-full px-10 my-7">
           <div>
