@@ -1,11 +1,11 @@
 'use client';
 
 import { useRouter } from "next/navigation";
-import jwt from 'jsonwebtoken';
+import jwtDecode from 'jwt-decode';
 
 export const ProtectedRoute = ({ children }) => {
   const router = useRouter();
-  let token = ''
+  let token = '';
   let decodedToken = null;
   if (typeof window !== "undefined") {
     token = localStorage.getItem("token") || "";
@@ -13,7 +13,7 @@ export const ProtectedRoute = ({ children }) => {
 
   if (token) {
     try {
-      decodedToken = jwt.decode(token);
+      decodedToken = jwtDecode(token);
       if (!decodedToken) {
         console.error('Invalid token or token has expired');
         router.push('/');
