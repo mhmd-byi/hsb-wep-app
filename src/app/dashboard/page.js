@@ -1,14 +1,13 @@
 "use client";
 
-import { ProtectedRoute } from "@/components/ProtectedRoute";
-import Image from "next/image";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import { Modal } from "@/components/Modal";
 import { useState, useEffect } from "react";
 
 export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
   const [users, setUsers] = useState([]);
-  console.log('this is users', users)
+  console.log("this is users", users);
 
   const fetchUsers = async () => {
     const response = await fetch("/api/users");
