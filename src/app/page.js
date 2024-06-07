@@ -40,7 +40,7 @@ export default function Login() {
       localStorage.setItem('token', loginData.token);
       localStorage.setItem('userId', loginData.user._id);
     }
-    router.push('/user-screen')
+    router.push('/dashboard')
   };
 
   return (
