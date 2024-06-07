@@ -38,9 +38,29 @@ export default function subscription() {
     }
   };
 
+  // Creating New Table on submit
+
   const onSubmit = async (data) => {
-    console.log(data);
+    try {
+      const response = await fetch("/api/subscription", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Subscription saved:", result);
+    } catch (error) {
+      console.error("Failed to submit subscription:", error);
+    }
   };
+
   return (
     <div className="flex justify-center items-center h-full">
       <div className="bg-white border-4 border-theme-color rounded-lg shadow relative w-2/4">
@@ -77,7 +97,7 @@ export default function subscription() {
                   type="text"
                   id="name"
                   {...register("name")}
-                  className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-cyan-600 block w-full p-2.5"
+                  className="shadow-sm cursor-not-allowed bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-cyan-600 block w-full p-2.5"
                   placeholder="Enter Member Name"
                   required
                   disabled
@@ -94,11 +114,30 @@ export default function subscription() {
                   type="number"
                   id="batch"
                   {...register("batch")}
-                  className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-cyan-600 block w-full p-2.5"
+                  className="shadow-sm cursor-not-allowed bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-cyan-600 block w-full p-2.5"
                   placeholder="Batch"
                   required
                   disabled
                 />
+              </div>
+              <div className="col-span-6 sm:col-span-3">
+                <label
+                  htmlFor="subscription"
+                  className="text-sm font-medium text-gray-900 block mb-2"
+                >
+                  Membership years
+                </label>
+                <select
+                  {...register("subscriptionYears")}
+                  className="shadow-sm bg-gray-50 border-2 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:ring-2 focus:border-theme-color block w-full p-2.5"
+                >
+                  <option value="0">Choose number of years</option>
+                  <option value="1">1 Year</option>
+                  <option value="2">2 Years</option>
+                  <option value="3">3 Years</option>
+                  <option value="4">4 Years</option>
+                  <option value="5">5 Years</option>
+                </select>
               </div>
               {/* Add other fields and submit button here */}
             </div>

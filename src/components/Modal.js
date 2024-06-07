@@ -185,13 +185,6 @@ export const Modal = ({ open, setOpen }) => {
                           >
                             Role
                           </label>
-                          {/*<input
-                            type="text"
-                            id="role"
-                            {...register("role")}
-                            className="shadow-sm bg-gray-50 border-2 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:ring-2 focus:border-theme-color block w-full p-2.5"
-                            placeholder="Enter Member Role"
-  />*/}
                           <select
                             {...register("role")}
                             className="shadow-sm bg-gray-50 border-2 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:ring-2 focus:border-theme-color block w-full p-2.5"
