@@ -190,7 +190,6 @@ export const Modal = ({ open, setOpen }) => {
                             className="shadow-sm bg-gray-50 border-2 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:ring-2 focus:border-theme-color block w-full p-2.5"
                           >
                             <option value="0">Select Options</option>
-                            <option value="admin">admin</option>
                             <option value="member">member</option>
                           </select>
                         </div>

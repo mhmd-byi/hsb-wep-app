@@ -11,11 +11,13 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <div className="h-screen">
+    <div className="h-screen flex flex-col">
       <Header />
-      <div className="flex">
+      <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <main className="flex-1 p-4 bg-gray-100 max-h-full">{children}</main>
+        <main className="flex-1 p-4 bg-gray-100 overflow-auto">
+          {children}
+        </main>
       </div>
     </div>
   );

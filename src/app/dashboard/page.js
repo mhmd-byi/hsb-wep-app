@@ -18,8 +18,7 @@ export default function Dashboard() {
   const getSubscriptionEndDate = async (its) => {
     const response = await fetch(`/api/fetch-user-subscription/${its}`);
     const data = await response.json();
-    console.log('line 3',data);
-    setSubscriptionEndDate(data.endDate)
+    setSubscriptionEndDate(data.endDate);
   };
   useEffect(() => {
     fetchUsers();
@@ -52,7 +51,7 @@ export default function Dashboard() {
         {showModal && <Modal open={showModal} setOpen={setShowModal} />}
         <div className="flex justify-between w-full px-10 my-7">
           <div>
-            <h1>HSB Members</h1>
+            <h1 className="text-4xl font-bold text-theme-color">HSB Members</h1>
           </div>
           <div>
             <button
@@ -105,11 +104,19 @@ export default function Dashboard() {
                 <td className="px-6 py-4 whitespace-nowrap">{user.batch}</td>
                 <td className="px-6 py-4 whitespace-nowrap">profileImage</td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                  <span
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      user.role === "admin"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-green-100 text-green-800"
+                    }`}
+                  >
                     {user.role}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">{subscriptionEndDate.split('T')[0]}</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {subscriptionEndDate?.split("T")[0] || "-"}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button
                     onClick={() => handleDelete(user.its)}

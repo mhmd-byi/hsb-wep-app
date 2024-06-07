@@ -18,7 +18,7 @@ const ProtectedRoute = ({ children }) => {
     const token = localStorage.getItem("token") || "";
 
     if (!token) {
-      console.warn("No token found, redirecting...");
+      console.log("No token found, redirecting...");
       router.push('/');
       return;
     }
@@ -28,7 +28,28 @@ const ProtectedRoute = ({ children }) => {
       if (!decodedToken) {
         console.error('Invalid token or token has expired');
         router.push('/');
+        return;
       }
+
+      fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: decodedToken._id })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.userExists) {
+          console.log('User not found in the database, redirecting...');
+          router.push('/');
+        }
+      })
+      .catch(error => {
+        console.error('Failed to verify user:', error);
+        router.push('/');
+      });
+
     } catch (error) {
       console.error('Error decoding token:', error);
       router.push('/');
