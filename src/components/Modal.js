@@ -34,7 +34,7 @@ export const Modal = ({ open, setOpen }) => {
   const generateYearOptions = () => {
     const currentYear = new Date().getFullYear();
     const years = [];
-    for (let year = 1989; year <= currentYear; year++) {
+    for (let year = 1995; year <= currentYear; year++) {
       years.push(year);
     }
     return years;
