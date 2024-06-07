@@ -14,19 +14,40 @@ export default async function handler(req, res) {
   try {
     await dbConnect();
 
-    const newSubscription = await Subscription.create({
-      its,
-      subscriptionStartDate: startDate.toISOString().split("T")[0],
-      subscriptionEndDate: endDate.toISOString().split("T")[0],
+    const checkForExistingSubscription = await Subscription.find({ its });
+    let activeSubscriptionExists = false;
+
+    checkForExistingSubscription.forEach((each) => {
+      const existingEndDate = new Date(each.subscriptionEndDate);
+      if (existingEndDate > currentDate) {
+        activeSubscriptionExists = true;
+      }
     });
 
-    res
-      .status(201)
-      .json({
+    console.log(
+      "Checking for existing subscription",
+      checkForExistingSubscription
+    );
+
+    if (!activeSubscriptionExists) {
+      const newSubscription = await Subscription.create({
+        its,
+        subscriptionStartDate: startDate.toISOString().split("T")[0],
+        subscriptionEndDate: endDate.toISOString().split("T")[0],
+      });
+
+      res.status(201).json({
         success: true,
         message: "Subscription created successfully",
         data: newSubscription,
       });
+    } else {
+      res.status(409).json({
+        success: false,
+        message: "An active subscription already exists.",
+        data: { subscriptionEndDate: activeSubscriptionExists.subscriptionEndDate }
+      });
+    }
   } catch (error) {
     console.error("Failed to create subscription:", error);
     res.status(500).json({ success: false, error: error.message });

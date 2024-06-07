@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
   const [users, setUsers] = useState([]);
-  console.log("this is users", users);
+  const [subscriptionEndDate, setSubscriptionEndDate] = useState();
 
   const fetchUsers = async () => {
     const response = await fetch("/api/users");
@@ -15,8 +15,15 @@ export default function Dashboard() {
     setUsers(data);
   };
 
+  const getSubscriptionEndDate = async (its) => {
+    const response = await fetch(`/api/fetch-user-subscription/${its}`);
+    const data = await response.json();
+    console.log('line 3',data);
+    setSubscriptionEndDate(data.endDate)
+  };
   useEffect(() => {
     fetchUsers();
+    getSubscriptionEndDate(30406688);
   }, [showModal]);
 
   const handleDelete = async (its) => {
@@ -81,6 +88,9 @@ export default function Dashboard() {
                 Role
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Subscription End Date
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Action
               </th>
             </tr>
@@ -99,6 +109,7 @@ export default function Dashboard() {
                     {user.role}
                   </span>
                 </td>
+                <td className="px-6 py-4 whitespace-nowrap">{subscriptionEndDate.split('T')[0]}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button
                     onClick={() => handleDelete(user.its)}

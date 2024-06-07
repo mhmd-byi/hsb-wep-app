@@ -11,6 +11,8 @@ export default function subscription() {
     },
   });
 
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState(""); // state to determine the message type (success/error)
   const itsNumber = watch("its");
 
   useEffect(() => {
@@ -38,8 +40,6 @@ export default function subscription() {
     }
   };
 
-  // Creating New Table on submit
-
   const onSubmit = async (data) => {
     try {
       const response = await fetch("/api/subscription", {
@@ -50,14 +50,20 @@ export default function subscription() {
         body: JSON.stringify(data),
       });
 
+      const result = await response.json();
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error(
+          result.message || `HTTP error! Status: ${response.status}`
+        );
       }
 
-      const result = await response.json();
       console.log("Subscription saved:", result);
+      setMessage("Subscription created successfully!");
+      setMessageType("success");
     } catch (error) {
       console.error("Failed to submit subscription:", error);
+      setMessage(error.message);
+      setMessageType("error");
     }
   };
 
@@ -98,8 +104,7 @@ export default function subscription() {
                   id="name"
                   {...register("name")}
                   className="shadow-sm cursor-not-allowed bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-cyan-600 block w-full p-2.5"
-                  placeholder="Enter Member Name"
-                  required
+                  placeholder="Member Name"
                   disabled
                 />
               </div>
@@ -116,7 +121,6 @@ export default function subscription() {
                   {...register("batch")}
                   className="shadow-sm cursor-not-allowed bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-cyan-600 block w-full p-2.5"
                   placeholder="Batch"
-                  required
                   disabled
                 />
               </div>
@@ -141,7 +145,16 @@ export default function subscription() {
               </div>
               {/* Add other fields and submit button here */}
             </div>
-            <div className="flex justify-end mt-10 pt-6 border-t border-gray-200 rounded-b">
+            <div className="flex justify-between items-center mt-10 pt-6 border-t border-gray-200 rounded-b">
+              <span
+                className={`text-sm font-bold ${
+                  messageType === "success"
+                    ? "text-theme-color"
+                    : "text-red-500"
+                }`}
+              >
+                {message}
+              </span>
               <button
                 className="text-white bg-theme-color font-medium  rounded-lg text-sm px-5 py-2.5 text-center"
                 type="submit"
