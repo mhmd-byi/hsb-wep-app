@@ -1,6 +1,4 @@
 "use client";
-
-import ProtectedRoute from "@/components/ProtectedRoute";
 import { Modal } from "@/components/Modal";
 import { useState, useEffect } from "react";
 
@@ -46,7 +44,6 @@ export default function Dashboard() {
   };
 
   return (
-    <ProtectedRoute>
       <div className="h-full flex flex-col">
         {showModal && <Modal open={showModal} setOpen={setShowModal} />}
         <div className="flex justify-between w-full px-10 my-7">
@@ -126,6 +123,5 @@ export default function Dashboard() {
           </tbody>
         </table>
       </div>
-    </ProtectedRoute>
   );
 }
