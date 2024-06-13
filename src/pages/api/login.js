@@ -1,8 +1,8 @@
+// api/login.js
 import dbConnect from '@/utils/dbConnect';
 import User from '@/models/User';
 
 export default async function handler(req, res) {
-  console.log('here')
   const { its, password } = req.body;
   await dbConnect();
 
@@ -13,7 +13,11 @@ export default async function handler(req, res) {
   }
 
   if (user.password === password) {
-    const token = user.generateAuthToken();
-    return res.status(200).send({ token, user });
+    if (user.role === 'admin') {
+      const token = user.generateAuthToken();
+      return res.status(200).send({ token, user });
+    } else {
+      return res.status(401).send({ error: `Your role was ${user.role}. This role is not authorized to log in.` });
+    }
   }
 }

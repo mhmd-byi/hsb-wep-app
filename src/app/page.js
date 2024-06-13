@@ -1,46 +1,53 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export default function Login() {
-  const [its, setIts] = useState('');
-  const [password, setPassword] = useState('');
+  const [its, setIts] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Check if ITS is entered
     if (!its) {
-      alert('Please enter your ITS.');
+      alert("Please enter your ITS.");
       return;
     }
-  
-    // Make a request to check if the ITS exists
+
     const res = await fetch(`/api/check-its/${its}`);
     const data = await res.json();
-  
+
     if (!data.exists) {
-      // If ITS is not found, show alert message
-      alert('ITS not found.');
+      alert("ITS not found.");
       return;
     }
-  
-    const loginRes = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+
+    const loginRes = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ its, password }),
     });
-  
+
     const loginData = await loginRes.json();
-    console.log('this is login data', loginData);
-    if (typeof window !== "undefined") {
-      localStorage.setItem('token', loginData.token);
-      localStorage.setItem('userId', loginData.user._id);
+    console.log("this is login data", loginData);
+
+    if (loginData.error) {
+      setError(loginData.error);
+    } else {
+      if (typeof window !== "undefined") {
+        localStorage.setItem("token", loginData.token);
+        localStorage.setItem("userId", loginData.user._id);
+      }
+      router.push("/dashboard");
+      setError("");
     }
-    router.push('/dashboard')
+  };
+
+  const handleInputChange = () => {
+    setError("");
   };
 
   return (
@@ -52,6 +59,11 @@ export default function Login() {
             <h1 className="pt-8 pb-6 font-bold text-white text-4xl text-center cursor-default">
               Log in
             </h1>
+            {error && (
+              <span className="text-red-500 w-[250px] p-2 bg-white rounded-md text-center mb-10">
+                {error}
+              </span>
+            )}
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -61,7 +73,10 @@ export default function Login() {
                 className="border p-3 bg-white text-theme-color shadow-md placeholder:text-base focus:scale-105 focus:border-theme-color ease-in-out duration-300 border-theme-color rounded-lg w-full"
                 type="number"
                 placeholder="Enter ITS Number"
-                onChange={(e) => setIts(e.target.value)}
+                onChange={(e) => {
+                  setIts(e.target.value);
+                  handleInputChange();
+                }}
                 required
               />
             </div>
@@ -71,7 +86,10 @@ export default function Login() {
                 className="border p-3 shadow-md text-theme-color bg-white placeholder:text-base focus:scale-105 ease-in-out duration-300 border-gray-300 rounded-lg w-full"
                 type="password"
                 placeholder="Password"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  handleInputChange();
+                }}
                 required
               />
             </div>
