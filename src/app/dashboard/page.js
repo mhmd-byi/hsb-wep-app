@@ -1,6 +1,12 @@
 "use client";
 import { Modal } from "@/components/Modal";
-import { Delete, ExpandLess, ExpandMore, PersonAdd } from "@mui/icons-material";
+import {
+  Delete,
+  Edit,
+  ExpandLess,
+  ExpandMore,
+  PersonAdd,
+} from "@mui/icons-material";
 import { useUsersTable } from "./hook/useUserManagement";
 
 export default function Dashboard() {
@@ -253,13 +259,14 @@ export default function Dashboard() {
                 {subscriptionEndDate?.split("T")[0] || "-"}
               </td>
               <td className="px-6 py-4 flex gap-2">
-                <PersonAdd
+                <Edit
                   className="text-theme-color cursor-pointer"
                   onClick={() => {
                     setUserToEdit(user);
                     setShowModal(true);
                   }}
                 />
+
                 <Delete
                   onClick={() => handleDelete(user.its)}
                   className="text-[#ff1a1a] cursor-pointer"
