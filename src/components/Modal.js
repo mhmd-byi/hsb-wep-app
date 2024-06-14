@@ -6,28 +6,58 @@ import {
   Transition,
   TransitionChild,
 } from "@headlessui/react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
-export const Modal = ({ open, setOpen }) => {
-  const { register, handleSubmit, reset } = useForm({
+export const Modal = ({ open, setOpen, userToEdit }) => {
+  const { register, handleSubmit, setValue, reset } = useForm({
     defaultValues: {
-      password: "abc@123",
+      its: "",
+      name: "",
+      email: "",
+      phone: "",
+      batch: "",
+      role: "",
     },
   });
 
-  const onSubmit = async (data) => {
-    console.log(data)
-    const res = await fetch("/api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    console.log(res);
-    if (res.status === 200) {
-      setOpen(false);
-      reset();
+  useEffect(() => {
+    if (userToEdit) {
+      Object.keys(userToEdit).forEach((key) => {
+        setValue(key, userToEdit[key]);
+      });
     } else {
-      alert("User not added");
+      reset();
+    }
+  }, [userToEdit, setValue, reset]);
+
+  const onSubmit = async (data) => {
+    if (userToEdit) {
+      // Update user
+      const res = await fetch(`/api/update-user/${userToEdit.its}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      console.log(res);
+      if (res.status === 200) {
+        setOpen(false);
+      } else {
+        alert("User not updated");
+      }
+    } else {
+      // Create user
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      console.log(res);
+      if (res.status === 200) {
+        setOpen(false);
+      } else {
+        alert("User not added");
+      }
     }
   };
 
@@ -72,7 +102,10 @@ export const Modal = ({ open, setOpen }) => {
                       type="button"
                       className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
                       data-modal-toggle="product-modal"
-                      onClick={() => setOpen(false)}
+                      onClick={() => {
+                        setOpen(false);
+                        reset();
+                      }}
                     >
                       <svg
                         className="w-5 h-5"
@@ -103,6 +136,7 @@ export const Modal = ({ open, setOpen }) => {
                             type="number"
                             id="its"
                             {...register("its")}
+                            disabled={userToEdit !== null}
                             className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-theme-color block w-full p-2.5"
                             placeholder="3040xxxx"
                             required
@@ -212,7 +246,7 @@ export const Modal = ({ open, setOpen }) => {
                           className="text-white bg-theme-color font-medium  rounded-lg text-sm px-5 py-2.5 text-center"
                           type="submit"
                         >
-                          Register
+                        {userToEdit ? "Update" : "Register"}
                         </button>
                       </div>
                     </form>
