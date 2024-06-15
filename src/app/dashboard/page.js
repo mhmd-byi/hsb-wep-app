@@ -4,36 +4,28 @@ import { useState, useEffect } from "react";
 import Fuse from "fuse.js";
 import { Delete, ExpandLess, ExpandMore, PersonAdd, Edit } from "@mui/icons-material";
 import { Toaster } from "react-hot-toast";
+import { Loader } from "@/components/loader";
+import SearchIcon from '@mui/icons-material/Search';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { useDashboard } from "./useDashboard";
 
 export default function Dashboard() {
-  const [userToEdit, setUserToEdit] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [users, setUsers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [subscriptionEndDate, setSubscriptionEndDate] = useState();
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [showBatchDropdown, setShowBatchDropdown] = useState(false);
-  const [selectedBatches, setSelectedBatches] = useState([]);
-  const [selectedRole, setSelectedRole] = useState("");
-  const [showRoleDropdown, setShowRoleDropdown] = useState(false);
-  const [sortOrder, setSortOrder] = useState('asc');
+  
+  
 
-  const handleRoleSelection = (role) => {
-    setSelectedRole(role);
-  };
-
-  const handleBatchSelection = (batch) => {
-    if (selectedBatches.includes(batch)) {
-      setSelectedBatches(selectedBatches.filter((b) => b !== batch));
-    } else {
-      setSelectedBatches([...selectedBatches, batch]);
-    }
-  };
-
-  const getUniqueBatches = () => {
-    const batches = new Set(users.map((user) => user.batch));
-    return Array.from(batches).sort((a, b) => b - a);
-  };
+  const {
+    handleRoleSelection,
+    handleBatchSelection,
+    getUniqueBatches,
+    fetchUsers,
+    isLoading,
+    getSubscriptionEndDate,
+    handleDelete,
+    dashboardState,
+    setDashboardState,
+    users,
+    setUsers,
+  } = useDashboard();
 
   const renderDropdownOptions = () => {
     const uniqueBatches = getUniqueBatches();
@@ -104,41 +96,10 @@ export default function Dashboard() {
     ) : null;
   };
 
-  const fetchUsers = async () => {
-    const response = await fetch("/api/users");
-    const data = await response.json();
-    setUsers(data);
-  };
-
-  const getSubscriptionEndDate = async (its) => {
-    const response = await fetch(`/api/fetch-user-subscription/${its}`);
-    const data = await response.json();
-    setSubscriptionEndDate(data.endDate);
-  };
-
   useEffect(() => {
     fetchUsers();
     getSubscriptionEndDate(30406688);
-  }, [showModal]);
-
-  const handleDelete = async (its) => {
-    try {
-      const confirmDelete = window.confirm(
-        "Are you sure you want to delete this user?"
-      );
-      if (confirmDelete) {
-        const response = await fetch(`/api/delete-user/${its}`, {
-          method: "DELETE",
-        });
-
-        if (!response.ok) throw new Error("Deletion failed");
-
-        setUsers(users.filter((user) => user.its !== its));
-      }
-    } catch (error) {
-      console.error("Failed to delete user:", error);
-    }
-  };
+  }, [dashboardState.showModal]);
 
   const fuseOptions = {
     keys: ["name"],
@@ -153,20 +114,20 @@ export default function Dashboard() {
     const nameB = b.name.toLowerCase();
 
     if (nameA < nameB) {
-      return sortOrder === 'asc' ? -1 : 1;
+      return dashboardState.sortOrder === 'asc' ? -1 : 1;
     }
     if (nameA > nameB) {
-      return sortOrder === 'asc' ? 1 : -1;
+      return dashboardState.sortOrder === 'asc' ? 1 : -1;
     }
     return 0;
   };
   const sortedUsers = [...users].sort(sortUsers);
 
-  const filteredUsers = searchTerm
+  const filteredUsers = dashboardState.searchTerm
   ? sortedUsers.filter(
       (user) =>
-        (selectedBatches.length === 0 || selectedBatches.includes(user.batch)) &&
-        (selectedRole === '' || user.role === selectedRole) &&
+        (dashboardState.selectedBatches.length === 0 || dashboardState.selectedBatches.includes(user.batch)) &&
+        (dashboardState.selectedRole === '' || user.role === dashboardState.selectedRole) &&
         (user.its.toString().includes(searchTerm) ||
           fuse
             .search(searchTerm)
@@ -175,20 +136,24 @@ export default function Dashboard() {
     )
   : sortedUsers.filter(
       (user) =>
-        (selectedBatches.length === 0 || selectedBatches.includes(user.batch)) &&
-        (selectedRole === '' || user.role === selectedRole)
+        (dashboardState.selectedBatches.length === 0 || dashboardState.selectedBatches.includes(user.batch)) &&
+        (dashboardState.selectedRole === '' || user.role === dashboardState.selectedRole)
     );
   const toggleDropdown = () => {
-    setShowDropdown(!showDropdown);
+    setDashboardState({
+      ...dashboardState,
+      showDropdown: !showDropdown,
+    })
   };
 
   return (
     <div className="relative h-full flex flex-col">
-      {showModal && (
+    {isLoading && <Loader />}
+      {dashboardState.showModal && (
         <Modal
-          open={showModal}
-          setOpen={setShowModal}
-          userToEdit={userToEdit}
+          open={dashboardState.showModal}
+          setOpen={(isOpen) => setDashboardState(prevState => ({ ...prevState, showModal: isOpen }))}
+          userToEdit={dashboardState.userToEdit}
         />
       )}
       <div className="flex justify-between items-center w-full px-6 my-7 sticky top-0 bg-white py-4 shadow-md">
@@ -207,23 +172,9 @@ export default function Dashboard() {
                   type="button"
                 >
                   <span>All categories</span>
-                  <svg
-                    className="w-2.5 h-2.5 ml-2.5"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 10 6"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="m1 1 4 4 4-4"
-                    />
-                  </svg>
+                  <KeyboardArrowDownIcon />
                 </button>
-                {showDropdown && (
+                {dashboardState.showDropdown && (
                   <div
                     id="dropdown"
                     class="w-full absolute z-10 bg-theme-color divide-y divide-gray-100 rounded-lg shadow"
@@ -250,22 +201,7 @@ export default function Dashboard() {
                   type="submit"
                   class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-theme-color rounded-e-lg border focus:ring-4 focus:outline-none"
                 >
-                  <svg
-                    class="w-4 h-4"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 20
-                    20"
-                  >
-                    <path
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                    />
-                  </svg>
+                  <SearchIcon />
                   <span class="sr-only">Search</span>
                 </button>
               </div>
@@ -275,8 +211,11 @@ export default function Dashboard() {
           <div>
             <span
               onClick={() => {
-                setUserToEdit(null);
-                setShowModal(true)
+                setDashboardState({
+                  ...dashboardState,
+                  userToEdit: null,
+                  showModal: true,
+                })
               }}
               className="bg-theme-color p-3 rounded cursor-pointer border-theme-color border-2 hover:bg-transparent group"
             >
@@ -334,14 +273,17 @@ export default function Dashboard() {
                 </span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
-                {subscriptionEndDate?.split("T")[0] || "-"}
+                {dashboardState.subscriptionEndDate?.split("T")[0] || "-"}
               </td>
               <td className="px-6 py-4 flex gap-2">
                 <Edit
                   className="text-theme-color cursor-pointer"
                   onClick={() => {
-                    setUserToEdit(user);
-                    setShowModal(true);
+                    setDashboardState({
+                      ...dashboardState,
+                      userToEdit: user,
+                      showModal: true,
+                    })
                   }}
                 />
                 <Delete
