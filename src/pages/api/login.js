@@ -19,5 +19,7 @@ export default async function handler(req, res) {
     } else {
       return res.status(401).send({ error: `Your role was ${user.role}. This role is not authorized to log in.` });
     }
+  } else {
+    return res.status(401).send({ error: 'Incorrect ITS or password' });
   }
 }

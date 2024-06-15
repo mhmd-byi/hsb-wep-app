@@ -10,26 +10,15 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 export const Modal = ({ open, setOpen, userToEdit }) => {
-  const { register, handleSubmit, setValue, reset } = useForm({
-    defaultValues: {
-      its: "",
-      name: "",
-      email: "",
-      phone: "",
-      batch: "",
-      role: "",
-    },
-  });
+  const { register, handleSubmit, reset } = useForm();
 
   useEffect(() => {
     if (userToEdit) {
-      Object.keys(userToEdit).forEach((key) => {
-        setValue(key, userToEdit[key]);
-      });
+      reset(userToEdit);
     } else {
       reset();
     }
-  }, [userToEdit, setValue, reset]);
+  }, [userToEdit]);
 
   const onSubmit = async (data) => {
     if (userToEdit) {
@@ -39,9 +28,8 @@ export const Modal = ({ open, setOpen, userToEdit }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      console.log(res);
       if (res.status === 200) {
-        setOpen(false);
+        handleClose();
       } else {
         alert("User not updated");
       }
@@ -52,9 +40,8 @@ export const Modal = ({ open, setOpen, userToEdit }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      console.log(res);
       if (res.status === 200) {
-        setOpen(false);
+        handleClose();
       } else {
         alert("User not added");
       }
@@ -70,9 +57,14 @@ export const Modal = ({ open, setOpen, userToEdit }) => {
     return years;
   };
 
+  const handleClose = () => {
+    reset();
+    setOpen(false);
+  }
+
   return (
     <Transition show={open}>
-      <Dialog className="relative z-10" onClose={() => setOpen(false)}>
+      <Dialog className="relative z-10" onClose={() => null}>
         <TransitionChild
           enter="ease-out duration-300"
           enterFrom="opacity-0"
@@ -97,15 +89,12 @@ export const Modal = ({ open, setOpen, userToEdit }) => {
               <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 w-fit h-fit">
                 <div className="bg-white border-4 border-theme-color rounded-lg shadow relative">
                   <div className="flex items-start justify-between p-5 border-b rounded-t">
-                    <h3 className="text-xl font-semibold">Add Member</h3>
+                    <h3 className="text-xl font-semibold">{userToEdit ? 'Edit Member' : 'Add Member'}</h3>
                     <button
                       type="button"
                       className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
                       data-modal-toggle="product-modal"
-                      onClick={() => {
-                        setOpen(false);
-                        reset();
-                      }}
+                      onClick={handleClose}
                     >
                       <svg
                         className="w-5 h-5"

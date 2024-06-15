@@ -3,17 +3,22 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Loader } from "@/components/loader";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Login() {
   const [its, setIts] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loader, setLoader] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoader(true);
     if (!its) {
-      alert("Please enter your ITS.");
+      toast.error("Please enter your ITS.");
+      setLoader(false);
       return;
     }
 
@@ -21,7 +26,8 @@ export default function Login() {
     const data = await res.json();
 
     if (!data.exists) {
-      alert("ITS not found.");
+      toast.error("ITS not found.");
+      setLoader(false);
       return;
     }
 
@@ -32,18 +38,17 @@ export default function Login() {
     });
 
     const loginData = await loginRes.json();
-    console.log("this is login data", loginData);
 
     if (loginData.error) {
-      setError(loginData.error);
+      toast.error(loginData.error);
     } else {
       if (typeof window !== "undefined") {
         localStorage.setItem("token", loginData.token);
         localStorage.setItem("userId", loginData.user._id);
       }
       router.push("/dashboard");
-      setError("");
     }
+    setLoader(false);
   };
 
   const handleInputChange = () => {
@@ -52,6 +57,7 @@ export default function Login() {
 
   return (
     <div className="h-screen w-screen flex justify-center items-center">
+      {loader && <Loader />}
       <div className="grid gap-8">
         <div className="border-[20px] border-transparent rounded-[20px] bg-theme-color shadow-lg xl:p-10 2xl:p-10 lg:p-10 md:p-10 sm:p-2 m-2">
           <div className="flex flex-col justify-center items-center">
@@ -110,6 +116,7 @@ export default function Login() {
           </form>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 }
