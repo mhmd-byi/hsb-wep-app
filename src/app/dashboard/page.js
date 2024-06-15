@@ -133,9 +133,9 @@ export default function Dashboard() {
       (user) =>
         (dashboardState.selectedBatches.length === 0 || dashboardState.selectedBatches.includes(user.batch)) &&
         (dashboardState.selectedRole === '' || user.role === dashboardState.selectedRole) &&
-        (user.its.toString().includes(searchTerm) ||
+        (user.its.toString().includes(dashboardState.searchTerm) ||
           fuse
-            .search(searchTerm)
+            .search(dashboardState.searchTerm)
             .map((result) => result.item)
             .includes(user))
     )
@@ -197,7 +197,12 @@ export default function Dashboard() {
                 <input
                   type="search"
                   id="search-dropdown"
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    setDashboardState({
+                      ...dashboardState,
+                      searchTerm: e.target.value,
+                    })
+                  }}
                   class="block p-2.5 w-56 z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300"
                   placeholder="Search ITS, Name . . ."
                   required

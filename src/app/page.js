@@ -50,10 +50,6 @@ export default function Login() {
     setLoader(false);
   };
 
-  const handleInputChange = () => {
-    toast.error("");
-  };
-
   return (
     <div className="h-screen w-screen flex justify-center items-center">
       {loader && <Loader />}
@@ -75,7 +71,6 @@ export default function Login() {
                 placeholder="Enter ITS Number"
                 onChange={(e) => {
                   setIts(e.target.value);
-                  handleInputChange();
                 }}
                 required
               />
@@ -88,7 +83,6 @@ export default function Login() {
                 placeholder="Password"
                 onChange={(e) => {
                   setPassword(e.target.value);
-                  handleInputChange();
                 }}
                 required
               />
