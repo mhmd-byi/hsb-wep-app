@@ -24,15 +24,15 @@ export const useDashboard = () => {
   };
 
   const handleBatchSelection = (batch) => {
-    if (selectedBatches.includes(batch)) {
+    if (dashboardState.selectedBatches.includes(batch)) {
       setDashboardState({
         ...dashboardState,
-        selectedBatches: selectedBatches.filter((b) => b !== batch),
+        selectedBatches: dashboardState.selectedBatches.filter((b) => b !== batch),
       })
     } else {
       setDashboardState({
         ...dashboardState,
-        selectedBatches: [...selectedBatches, batch],
+        selectedBatches: [...dashboardState.selectedBatches, batch],
       })
     }
   };

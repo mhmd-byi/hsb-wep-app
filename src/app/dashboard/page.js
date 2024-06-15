@@ -10,8 +10,6 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useDashboard } from "./useDashboard";
 
 export default function Dashboard() {
-  
-  
 
   const {
     handleRoleSelection,
@@ -24,24 +22,28 @@ export default function Dashboard() {
     dashboardState,
     setDashboardState,
     users,
-    setUsers,
   } = useDashboard();
 
   const renderDropdownOptions = () => {
     const uniqueBatches = getUniqueBatches();
     const uniqueRoles = [...new Set(users.map((user) => user.role))];
 
-    return showDropdown ? (
+    return dashboardState.showDropdown ? (
       <div className="py-2">
         <li
           className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-          onClick={() => setShowBatchDropdown(!showBatchDropdown)}
+          onClick={() => {
+            setDashboardState({
+              ...dashboardState,
+              showBatchDropdown: !dashboardState.showBatchDropdown
+            })
+          }}
         >
           <div className="flex justify-between items-center">
             <span>Batch</span>
-            {showBatchDropdown ? <ExpandLess /> : <ExpandMore />}
+            {dashboardState.showBatchDropdown ? <ExpandLess /> : <ExpandMore />}
           </div>
-          {showBatchDropdown && (
+          {dashboardState.showBatchDropdown && (
             <div className="max-h-48 overflow-y-scroll">
               {uniqueBatches.map((batch) => (
                 <div key={batch} className="ps-4">
@@ -50,7 +52,7 @@ export default function Dashboard() {
                     type="checkbox"
                     value=""
                     className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                    checked={selectedBatches.includes(batch)}
+                    checked={dashboardState.selectedBatches.includes(batch)}
                     onChange={() => handleBatchSelection(batch)}
                   />
                   <label
@@ -66,13 +68,18 @@ export default function Dashboard() {
         </li>
         <li
           className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-          onClick={() => setShowRoleDropdown(!showRoleDropdown)}
+          onClick={() => {
+            setDashboardState({
+              ...dashboardState,
+              showRoleDropdown: !dashboardState.showRoleDropdown,
+            })
+          }}
         >
           <div className="flex justify-between items-center">
             <span>Role</span>
-            {showRoleDropdown ? <ExpandLess /> : <ExpandMore />}
+            {dashboardState.showRoleDropdown ? <ExpandLess /> : <ExpandMore />}
           </div>
-          {showRoleDropdown &&
+          {dashboardState.showRoleDropdown &&
             uniqueRoles.map((role) => (
               <div key={role} className="ps-4">
                 <input
@@ -80,7 +87,7 @@ export default function Dashboard() {
                   type="radio"
                   value={role}
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                  checked={selectedRole === role}
+                  checked={dashboardState.selectedRole === role}
                   onChange={() => handleRoleSelection(role)}
                 />
                 <label
@@ -142,7 +149,7 @@ export default function Dashboard() {
   const toggleDropdown = () => {
     setDashboardState({
       ...dashboardState,
-      showDropdown: !showDropdown,
+      showDropdown: !dashboardState.showDropdown,
     })
   };
 
