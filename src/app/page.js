@@ -9,7 +9,6 @@ import toast, { Toaster } from "react-hot-toast";
 export default function Login() {
   const [its, setIts] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [loader, setLoader] = useState(false);
   const router = useRouter();
 
@@ -52,7 +51,7 @@ export default function Login() {
   };
 
   const handleInputChange = () => {
-    setError("");
+    toast.error("");
   };
 
   return (
@@ -65,11 +64,6 @@ export default function Login() {
             <h1 className="pt-8 pb-6 font-bold text-white text-4xl text-center cursor-default">
               Log in
             </h1>
-            {error && (
-              <span className="text-red-500 w-[250px] p-2 bg-white rounded-md text-center mb-10">
-                {error}
-              </span>
-            )}
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

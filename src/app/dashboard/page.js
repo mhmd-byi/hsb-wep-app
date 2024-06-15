@@ -1,12 +1,10 @@
 "use client";
 import { Modal } from "@/components/Modal";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Fuse from "fuse.js";
-import { Delete, ExpandLess, ExpandMore, PersonAdd, Edit } from "@mui/icons-material";
+import { DeleteOutline as Delete, ExpandLess, ExpandMore, PersonAdd, EditOutlined as Edit, Search, KeyboardArrowDown } from "@mui/icons-material";
 import { Toaster } from "react-hot-toast";
 import { Loader } from "@/components/loader";
-import SearchIcon from '@mui/icons-material/Search';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useDashboard } from "./useDashboard";
 
 export default function Dashboard() {
@@ -179,7 +177,7 @@ export default function Dashboard() {
                   type="button"
                 >
                   <span>All categories</span>
-                  <KeyboardArrowDownIcon />
+                  <KeyboardArrowDown />
                 </button>
                 {dashboardState.showDropdown && (
                   <div
@@ -208,7 +206,7 @@ export default function Dashboard() {
                   type="submit"
                   class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-theme-color rounded-e-lg border focus:ring-4 focus:outline-none"
                 >
-                  <SearchIcon />
+                  <Search />
                   <span class="sr-only">Search</span>
                 </button>
               </div>
