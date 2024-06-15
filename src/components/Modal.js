@@ -6,17 +6,29 @@ import {
   Transition,
   TransitionChild,
 } from "@headlessui/react";
+import { TextField } from "@mui/material";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 export const Modal = ({ open, setOpen, userToEdit }) => {
-  const { register, handleSubmit, reset } = useForm();
+  const { handleSubmit, reset, control } = useForm();
 
+  const formReset = () => {
+    reset({
+      its: '',
+      name: '',
+      email: '',
+      phone: '',
+      batch: '',
+      role: ''
+    })
+  }
   useEffect(() => {
     if (userToEdit) {
       reset(userToEdit);
     } else {
-      reset();
+      formReset();
     }
   }, [userToEdit]);
 
@@ -30,8 +42,9 @@ export const Modal = ({ open, setOpen, userToEdit }) => {
       });
       if (res.status === 200) {
         handleClose();
+        toast.success("User updated");
       } else {
-        alert("User not updated");
+        toast.error("User not updated");
       }
     } else {
       // Create user
@@ -42,8 +55,9 @@ export const Modal = ({ open, setOpen, userToEdit }) => {
       });
       if (res.status === 200) {
         handleClose();
+        toast.success('Member added')
       } else {
-        alert("User not added");
+        toast.error("User not added");
       }
     }
   };
@@ -58,9 +72,9 @@ export const Modal = ({ open, setOpen, userToEdit }) => {
   };
 
   const handleClose = () => {
-    reset();
+    formReset();
     setOpen(false);
-  }
+  };
 
   return (
     <Transition show={open}>
@@ -89,7 +103,9 @@ export const Modal = ({ open, setOpen, userToEdit }) => {
               <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 w-fit h-fit">
                 <div className="bg-white border-4 border-theme-color rounded-lg shadow relative">
                   <div className="flex items-start justify-between p-5 border-b rounded-t">
-                    <h3 className="text-xl font-semibold">{userToEdit ? 'Edit Member' : 'Add Member'}</h3>
+                    <h3 className="text-xl font-semibold">
+                      {userToEdit ? "Edit Member" : "Add Member"}
+                    </h3>
                     <button
                       type="button"
                       className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
@@ -121,14 +137,12 @@ export const Modal = ({ open, setOpen, userToEdit }) => {
                           >
                             ITS Number
                           </label>
-                          <input
-                            type="number"
-                            id="its"
-                            {...register("its")}
-                            disabled={userToEdit !== null}
-                            className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-theme-color block w-full p-2.5"
-                            placeholder="3040xxxx"
-                            required
+                          <Controller
+                            render={({ field }) => <TextField {...field} />}
+                            name="its"
+                            control={control}
+                            rules={{ required: true }}
+                            defaultValue=""
                           />
                         </div>
                         <div className="col-span-6 sm:col-span-3">
@@ -138,13 +152,12 @@ export const Modal = ({ open, setOpen, userToEdit }) => {
                           >
                             Name
                           </label>
-                          <input
-                            type="text"
-                            id="name"
-                            {...register("name")}
-                            className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-cyan-600 block w-full p-2.5"
-                            placeholder="Enter Member Name"
-                            required
+                          <Controller
+                            render={({ field }) => <TextField {...field} />}
+                            name="name"
+                            control={control}
+                            rules={{ required: true }}
+                            defaultValue=""
                           />
                         </div>
                         <div className="col-span-6 sm:col-span-3">
@@ -154,13 +167,12 @@ export const Modal = ({ open, setOpen, userToEdit }) => {
                           >
                             Email
                           </label>
-                          <input
-                            type="email"
-                            id="email"
-                            {...register("email")}
-                            className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-cyan-600 block w-full p-2.5"
-                            placeholder="Email"
-                            required
+                          <Controller
+                            render={({ field }) => <TextField {...field} />}
+                            name="email"
+                            control={control}
+                            rules={{ required: true }}
+                            defaultValue=""
                           />
                         </div>
                         <div className="col-span-6 sm:col-span-3">
@@ -170,15 +182,17 @@ export const Modal = ({ open, setOpen, userToEdit }) => {
                           >
                             Phone
                           </label>
-                          <input
-                            type="number"
-                            id="phone"
-                            {...register("phone")}
-                            minLength="1"
-                            maxLength="10"
-                            className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-cyan-600 block w-full p-2.5"
-                            placeholder="Enter Phone Number"
-                            required
+                          <Controller
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-cyan-600 block w-full p-2.5"
+                              />
+                            )}
+                            name="phone"
+                            control={control}
+                            rules={{ required: true }}
+                            defaultValue=""
                           />
                         </div>
                         <div className="col-span-6 sm:col-span-3">
@@ -188,18 +202,26 @@ export const Modal = ({ open, setOpen, userToEdit }) => {
                           >
                             Batch
                           </label>
-                          <select
-                            id="batch"
-                            {...register("batch")}
-                            className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-theme-color block w-full p-2.5"
-                          >
-                            <option value="">Select Year</option>
-                            {generateYearOptions().map((year) => (
-                              <option key={year} value={year}>
-                                {year}
-                              </option>
-                            ))}
-                          </select>
+                          <Controller
+                            render={({ field }) => (
+                              <select
+                                id="batch"
+                                {...field}
+                                className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:border-theme-color block w-full p-2.5"
+                              >
+                                <option value="">Select Year</option>
+                                {generateYearOptions().map((year) => (
+                                  <option key={year} value={year}>
+                                    {year}
+                                  </option>
+                                ))}
+                              </select>
+                            )}
+                            name="batch"
+                            control={control}
+                            rules={{ required: true }}
+                            defaultValue=""
+                          />
                         </div>
                         <div className="col-span-6 sm:col-span-3">
                           <label
@@ -208,13 +230,21 @@ export const Modal = ({ open, setOpen, userToEdit }) => {
                           >
                             Role
                           </label>
-                          <select
-                            {...register("role")}
-                            className="shadow-sm bg-gray-50 border-2 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:ring-2 focus:border-theme-color block w-full p-2.5"
-                          >
-                            <option value="0">Select Options</option>
-                            <option value="member">member</option>
-                          </select>
+                          <Controller
+                            render={({ field }) => (
+                              <select
+                                {...field}
+                                className="shadow-sm bg-gray-50 border-2 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-theme-color focus:ring-2 focus:border-theme-color block w-full p-2.5"
+                              >
+                                <option value="0">Select Options</option>
+                                <option value="member">member</option>
+                              </select>
+                            )}
+                            name="role"
+                            control={control}
+                            rules={{ required: true }}
+                            defaultValue=""
+                          />
                         </div>
                         <div className="col-span-full">
                           <label
@@ -235,7 +265,7 @@ export const Modal = ({ open, setOpen, userToEdit }) => {
                           className="text-white bg-theme-color font-medium  rounded-lg text-sm px-5 py-2.5 text-center"
                           type="submit"
                         >
-                        {userToEdit ? "Update" : "Register"}
+                          {userToEdit ? "Update" : "Register"}
                         </button>
                       </div>
                     </form>

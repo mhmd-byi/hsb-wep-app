@@ -3,6 +3,7 @@ import { Modal } from "@/components/Modal";
 import { useState, useEffect } from "react";
 import Fuse from "fuse.js";
 import { Delete, ExpandLess, ExpandMore, PersonAdd, Edit } from "@mui/icons-material";
+import { Toaster } from "react-hot-toast";
 
 export default function Dashboard() {
   const [userToEdit, setUserToEdit] = useState(null);
@@ -188,7 +189,6 @@ export default function Dashboard() {
           open={showModal}
           setOpen={setShowModal}
           userToEdit={userToEdit}
-          setUserToEdit={setUserToEdit}
         />
       )}
       <div className="flex justify-between items-center w-full px-6 my-7 sticky top-0 bg-white py-4 shadow-md">
@@ -274,7 +274,10 @@ export default function Dashboard() {
 
           <div>
             <span
-              onClick={() => setShowModal(true)}
+              onClick={() => {
+                setUserToEdit(null);
+                setShowModal(true)
+              }}
               className="bg-theme-color p-3 rounded cursor-pointer border-theme-color border-2 hover:bg-transparent group"
             >
               <PersonAdd className="text-white group-hover:text-theme-color" />
@@ -350,6 +353,7 @@ export default function Dashboard() {
           ))}
         </tbody>
       </table>
+      <Toaster />
     </div>
   );
 }
