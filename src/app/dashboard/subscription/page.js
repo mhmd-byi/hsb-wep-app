@@ -57,7 +57,6 @@ export default function subscription() {
         );
       }
 
-      console.log("Subscription saved:", result);
       setMessage("Subscription created successfully!");
       setMessageType("success");
     } catch (error) {

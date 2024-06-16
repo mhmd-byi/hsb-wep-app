@@ -24,11 +24,6 @@ export default async function handler(req, res) {
       }
     });
 
-    console.log(
-      "Checking for existing subscription",
-      checkForExistingSubscription
-    );
-
     if (!activeSubscriptionExists) {
       const newSubscription = await Subscription.create({
         its,

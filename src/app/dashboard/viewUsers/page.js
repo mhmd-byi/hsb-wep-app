@@ -18,7 +18,6 @@ export default function ViewUsers() {
   useEffect(async () => {
     const res = await fetch('/api/users');
     const data = await res.json();
-    console.log(data);
     setUsers(data);
   }, []);
 
@@ -43,7 +42,6 @@ export default function ViewUsers() {
 
   const handleDelete = async (its) => {
     try {
-      console.log('this is its fe', its);
       const response = await fetch(`/api/delete-user/${its}`, {
         method: 'DELETE',
       });

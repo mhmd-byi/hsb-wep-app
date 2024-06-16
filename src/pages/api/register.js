@@ -23,7 +23,6 @@ export default async function handler(req, res) {
       res.status(401).send({ error: 'Invalid details' });
     }
   } catch (error) {
-    console.log(error)
     res.status(500).json({ error: error.message });
   }
 }
