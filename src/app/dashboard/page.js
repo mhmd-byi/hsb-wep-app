@@ -1,11 +1,11 @@
 "use client";
-import { Modal } from "@/components/Modal";
 import { useEffect } from "react";
 import Fuse from "fuse.js";
 import { DeleteOutline as Delete, ExpandLess, ExpandMore, PersonAdd, EditOutlined as Edit, Search, KeyboardArrowDown } from "@mui/icons-material";
 import { Toaster } from "react-hot-toast";
 import { Loader } from "@/components/loader";
 import { useDashboard } from "./useDashboard";
+import { UserModal } from "./userModal";
 
 export default function Dashboard() {
 
@@ -155,7 +155,7 @@ export default function Dashboard() {
     <div className="relative h-full flex flex-col">
     {isLoading && <Loader />}
       {dashboardState.showModal && (
-        <Modal
+        <UserModal
           open={dashboardState.showModal}
           setOpen={(isOpen) => setDashboardState(prevState => ({ ...prevState, showModal: isOpen }))}
           userToEdit={dashboardState.userToEdit}
