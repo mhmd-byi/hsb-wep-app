@@ -2,7 +2,7 @@ import dbConnect from '@/utils/dbConnect';
 import User from '@/models/User';
 
 export default async function handler(req, res) {
-  const { name, its, password, email, phone, batch, role } = req.body;
+  const { name, its, password = 'abc@123', email, phone, batch, role } = req.body;
 
   try {
     await dbConnect();
